@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using DataBaseMigrator.Infrastructure;
 
 namespace DataBaseMigrator
 {
@@ -13,6 +14,11 @@ namespace DataBaseMigrator
         {
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+        }
+        protected void Application_Error()
+        {
+            Exception lastException = Server.GetLastError();
+            NLogCore.LogAplicationError(lastException);
         }
     }
 }
