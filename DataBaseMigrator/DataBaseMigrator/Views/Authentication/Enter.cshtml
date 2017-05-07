@@ -1,82 +1,110 @@
-﻿
-@{
-    ViewBag.Title = "Enter";
-    Layout = "~/Views/Shared/_MainDesign.cshtml";
-}
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h5><strong>Дані входу для БД Джерела</strong></h5>
-                            <div class="form-group">
-                                <div class="row">
-                                    <label class="col-md-3 control-label">Сервер:</label>
-                                    <div class="col-md-9">
-                                        <input class="form-control" name="ServerName1" />
-                                    </div>
-                                </div>
-                                </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <label class="col-md-3 control-label">Назва БД:</label>
-                                    <div class="col-md-9">
-                                        <input class="form-control" name="BDName1" />
-                                    </div>
-                                </div>
-                                </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <label class="col-md-3 control-label">Логін:</label>
-                                    <div class="col-md-9">
-                                        <input class="form-control" name="Login1" />
-                                    </div>
-                                </div>
-                                </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <label class="col-md-3 control-label">Пароль:</label>
-                                    <div class="col-md-9">
-                                        <input class="form-control" name="Password1" />
-                                    </div>
-                                </div>
-                                </div>
+﻿@using DataBaseMigrator.Models
+@model EnterStatus
+    @{
+        ViewBag.Title = "Enter";
+        Layout = "~/Views/Shared/_MainDesign.cshtml";
+    }
+
+    <form method="post" action="/Authentication/Enter" id="EnterIn">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><strong>Дані входу для БД Джерела</strong></h5>
+                    <div class="form-group">
+                        <div class="row">
+                            @Html.LabelFor(model => model.ServerName1,new { @class= "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(model=>model.ServerName1, new { @class = "form-control" })
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <h5><strong>Дані входу для БД Одержувача</strong></h5>
-                        <div class="form-group">
-                            <div class="row">
-                                <label class="col-md-3 control-label">Сервер:</label>
-                                <div class="col-md-9">
-                                    <input class="form-control" name="ServerName2" />
-                                </div>
+                    <div class="form-group">
+                        <div class="row">
+                            @Html.LabelFor(model => model.BDName1, new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(model => model.BDName1, new { @class = "form-control" })
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <label class="col-md-3 control-label">Назва БД:</label>
-                                <div class="col-md-9">
-                                    <input class="form-control" name="BDName2" />
-                                </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            @Html.LabelFor(model => model.Login1, new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(model => model.Login1, new { @class = "form-control" })
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <label class="col-md-3 control-label">Логін:</label>
-                                <div class="col-md-9">
-                                    <input class="form-control" name="Login2" />
-                                </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            @Html.LabelFor(model => model.Password1, new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(model => model.Password1, new { @class = "form-control" })
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <label class="col-md-3 control-label">Пароль:</label>
-                                <div class="col-md-9">
-                                    <input class="form-control" name="Password2" />
-                                </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5><strong>Дані входу для БД Одержувача</strong></h5>
+                    <div class="form-group">
+                        <div class="row">
+                            @Html.LabelFor(model => model.ServerName2, new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(model => model.ServerName2, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            @Html.LabelFor(model => model.BDName2, new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(model => model.BDName2, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            @Html.LabelFor(model => model.Login2, new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(model => model.Login2, new { @class = "form-control" })
+                            </div>
+                         </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            @Html.LabelFor(model => model.Password2, new { @class = "col-md-3 control-label" })
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(model => model.Password2, new { @class = "form-control" })
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Войти</button>
-            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Войти</button>
+        </div>
+    </form>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#EnterIn').submit(function (event) {
+            event.preventDefault();
+            $('div[class="alert alert-danger"]').remove();
+            var validate = $(this).serializeArray();
+            var status = true;
+            for (var i = 0; i < validate.length; i++)
+            {
+                if (validate[i].value == "")
+                {
+                    status = false;
+                    $('input[name=' + validate[i].name + ']').after('<div class="alert alert-danger">'
+                        + $('label[for=' + validate[i].name + ']').html() + ' - должно быть заполнено ' + '</div>');
+                }
+            }
+            var url = $(this).attr('action');
+            if (status) {
+                $.post(url, validate);
+            }
+        }
+        );
+    });
+</script>
