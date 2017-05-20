@@ -6,6 +6,7 @@
     }
 
     <form method="post" action="/Authentication/Enter" id="EnterIn">
+        @Html.AntiForgeryToken()
         <div class="modal-body">
             <div class="row">
                 <div class="col-md-6">
@@ -38,7 +39,7 @@
                         <div class="row">
                             @Html.LabelFor(model => model.Password1, new { @class = "col-md-3 control-label" })
                             <div class="col-md-9">
-                                @Html.TextBoxFor(model => model.Password1, new { @class = "form-control" })
+                                @Html.PasswordFor(model => model.Password1, new { @class = "form-control" })
                             </div>
                         </div>
                     </div>
@@ -73,7 +74,7 @@
                         <div class="row">
                             @Html.LabelFor(model => model.Password2, new { @class = "col-md-3 control-label" })
                             <div class="col-md-9">
-                                @Html.TextBoxFor(model => model.Password2, new { @class = "form-control" })
+                                @Html.PasswordFor(model => model.Password2, new { @class = "form-control" })
                             </div>
                         </div>
                     </div>
@@ -100,9 +101,22 @@
                         + $('label[for=' + validate[i].name + ']').html() + ' - должно быть заполнено ' + '</div>');
                 }
             }
-            var url = $(this).attr('action');
             if (status) {
-                $.post(url, validate);
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: "POST",
+                    data: validate,
+                    dataType: "json",
+                    success: function (data)
+                    {
+                        if (data.hasOwnProperty('url')) {
+                            $(location).attr('href', data.url);
+                        }
+                        else {
+                            alert(data);
+                        }
+                    }
+                });
             }
         }
         );
