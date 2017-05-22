@@ -16,7 +16,7 @@ namespace DataBaseMigrator
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Authentication", action = "Enter", id = UrlParameter.Optional   }
+                defaults: new { controller = "Migrator", action = "Enter", id = UrlParameter.Optional   }
             );
         }
     }

@@ -31,7 +31,7 @@ namespace DataBaseMigrator.Models
         [DataType(DataType.Password)]
         public  string Password2 { get; set; }
         public string StatusConnection { get; set; }
-        public string GetCampusConnectionString() =>
+        public string GetVkdConnectionString() =>
             new SqlConnectionStringBuilder {
                 DataSource = ServerName1,
                 InitialCatalog= BDName1,
@@ -40,7 +40,7 @@ namespace DataBaseMigrator.Models
                 UserID=Login1,
                 Password=Password1
             }.ToString();
-        public string GetVkdConnectionString() =>
+        public  string GetCampusConnectionString() =>
             new SqlConnectionStringBuilder
             {
                 DataSource = ServerName2,
@@ -50,23 +50,5 @@ namespace DataBaseMigrator.Models
                 UserID = Login2,
                 Password = Password2
             }.ToString();
-        public bool TestConnection(string t)
-        {
-            using (var test = new EmployeeTableContext<Type>(t))
-            {
-                try
-                {
-                    test.Database.Connection.Open();
-                    test.Database.Connection.Close();
-                }
-                catch(Exception ex)
-                {
-                    NLogCore.LogStatusAplication(ex);
-                    return false;
-                }
-            }
-            return true;
-        }
-
     }
 }

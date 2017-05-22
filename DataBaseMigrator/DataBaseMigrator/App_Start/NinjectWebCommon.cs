@@ -7,6 +7,8 @@ namespace DataBaseMigrator.App_Start
     using System.Web;
 
     using Microsoft.Web.Infrastructure.DynamicModuleHelper;
+    using DataBaseMigrator.Interface;
+    using DataBaseMigrator.Infrastructure;
 
     using Ninject;
     using Ninject.Web.Common;
@@ -61,6 +63,7 @@ namespace DataBaseMigrator.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
+            kernel.Bind<IRepositoryCore>().To<RepositoryCore>();
         }        
     }
 }

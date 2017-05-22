@@ -141,25 +141,26 @@
     <Content Include="Scripts\jquery-3.1.1.slim.min.js" />
     <Content Include="Web.config" />
     <Content Include="Views\Shared\_MainDesign.cshtml" />
-    <Content Include="Views\Authentication\Enter.cshtml" />
+    <Content Include="Views\Migrator\Enter.cshtml" />
     <Content Include="Scripts\jquery-3.1.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.1.1.min.map" />
-    <Content Include="Views\Authentication\ProgressShow.cshtml" />
+    <Content Include="Views\Migrator\ProgressShow.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\AuthenticationController.cs" />
+    <Compile Include="Controllers\MigratorController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Infrastructure\EmployeeTableContext.cs" />
-    <Compile Include="Infrastructure\NinjectDependencyResolver.cs" />
+    <Compile Include="Infrastructure\ConnectionStringManger.cs" />
+    <Compile Include="Infrastructure\CoreController.cs" />
+    <Compile Include="Infrastructure\RepositoryCore.cs" />
     <Compile Include="Infrastructure\NLogCore.cs" />
+    <Compile Include="Interface\IRepositoryCore.cs" />
     <Compile Include="Models\c_eE.cs" />
     <Compile Include="Models\eEmployees1.cs" />
     <Compile Include="Models\EnterStatus.cs" />
-    <Compile Include="Models\MigratorCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -174,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Core\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

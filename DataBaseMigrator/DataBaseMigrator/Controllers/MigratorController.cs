@@ -6,52 +6,54 @@ using System.Web.Mvc;
 using System.Web.Security;
 using DataBaseMigrator.Models;
 using DataBaseMigrator.Infrastructure;
+using DataBaseMigrator.Interface;
 using System.Data;
 
 namespace DataBaseMigrator.Controllers
 {
-    public class AuthenticationController : Controller
+    public class MigratorController : CoreController
     {
-        private MigratorCore maindirectory;
+        private IRepositoryCore maindirectory;
+        public MigratorController(IRepositoryCore maindirectory)
+        {
+            this.maindirectory = maindirectory;
+        }
         // GET: Authentication
         [HttpGet]
         public ActionResult Enter()
         {
             return View();
         }
-        [Authorize]
         [HttpGet]
+        [Authorize]
         public ActionResult ProgressShow()
         {
-            return View();
+            if(!ConnectionStringManger.ExistConnect())
+            {
+                DeleteCookies();
+                return RedirectToAction("Enter");
+            }
+            return View(maindirectory.GetAllTables());
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Enter(EnterStatus f)
         {
-            var h = new EmployeeTableContext<c_eE>(f.GetVkdConnectionString());
-            try
-            {
-                var u = h.EmployeeTarget.ToList();        
-            }
-            catch(Exception ex)
-            {
-
-            }
             var status = true;
-             status &= f.TestConnection(f.GetCampusConnectionString());
-             status &= f.TestConnection(f.GetVkdConnectionString());
+             status &= RepositoryCore.TestConnection(f.GetCampusConnectionString());
+             status &= RepositoryCore.TestConnection(f.GetVkdConnectionString());
              if(!status)
             {
                 return Json("Connection to Database Fail", JsonRequestBehavior.AllowGet);
             }
-            maindirectory = new MigratorCore(f.GetCampusConnectionString(),f.GetVkdConnectionString());
+            ConnectionStringManger.CampusBd = f.GetCampusConnectionString();
+            ConnectionStringManger.VkdBd = f.GetVkdConnectionString();
             FormsAuthentication.SetAuthCookie("Availeble", true);
-            return Json(new { url = Url.Action("ProgressShow", "Authentication") });
+            return Json(new { url = Url.Action("ProgressShow", "Migrator") });
         }
 
-        [Authorize]
         [HttpGet]
+        [Authorize]
         public ActionResult Out()
         {
             FormsAuthentication.SignOut();
