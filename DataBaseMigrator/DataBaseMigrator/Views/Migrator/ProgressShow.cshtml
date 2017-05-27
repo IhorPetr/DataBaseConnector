@@ -39,8 +39,8 @@
     </div>
     <div class="modal-footer">
         <button type="button" id="Out" class="btn btn-danger">Вихід</button>
-        <button type="button" class="btn btn-default">Скачати звіт помилок програми</button>
-        <button type="button" class="btn btn-default">Скачати звіт імпорту даних</button>
+        <button type="button" class="btn btn-default" id="GetError">Звіт помилок</button>
+        <button type="button" class="btn btn-default" id="GetInfo">Звіт імпорту даних</button>
         <button type="submit" class="btn btn-primary">Почати</button>
     </div>
     </form>
@@ -79,6 +79,37 @@
                     }
                 });
             });
+            $('#GetInfo').click(function () {
+                debugger;
+                $.ajax({
+                    url: '/Migrator/GetAplicationStatus',
+                    dataType: "text",
+                    type: "GET",
+                    success: function(returnfil)
+                    {
+                        $(location).attr('href', "/Migrator/GetAplicationStatus?file=" + returnfil);
+                    },
+                    error: function ()
+                    {
+                        alert('File download failed!');
+                    }
+                });
+            });
+            $('#GetError').click(function () {
+                debugger;
+                $.ajax({
+                    url: '/Migrator/GetAplicationError',
+                    dataType: "text",
+                    type: "GET",
+                    success: function (returnfil) {
+                        $(location).attr('href', "/Migrator/GetAplicationError?file=" + returnfil);
+                    },
+                    error: function () {
+                        alert('File download failed!');
+                    }
+                });
+            });
+
             $('#Out').click(function () {
                 $(location).attr('href', '@Url.Action("Out", "Migrator")');
             })

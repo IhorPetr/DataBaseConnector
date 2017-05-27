@@ -44,7 +44,7 @@ namespace DataBaseMigrator.Controllers
              status &= MigratorRepository.TestConnection(f.GetVkdConnectionString());
              if(!status)
             {
-                return Json("Connection to Database Fail", JsonRequestBehavior.AllowGet);
+                return Json("Ошибка соединения с базой", JsonRequestBehavior.AllowGet);
             }
             ConnectionStringManger.CampusBd = f.GetCampusConnectionString();
             ConnectionStringManger.VkdBd = f.GetVkdConnectionString();
@@ -63,8 +63,34 @@ namespace DataBaseMigrator.Controllers
         [Authorize]
         public ActionResult ProgressShow(string[] g)
         {
-            maindirectory.UpdateCampusDatabase(g);
-            return View(maindirectory.GetAllTables());
+            try
+            {
+                maindirectory.UpdateCampusDatabase(g);
+            }
+            catch(Exception ex)
+            {
+                NLogCore.LogAplicationError(ex);
+                return Json(ex.ToString(), JsonRequestBehavior.AllowGet);
+            }
+            return Json("Імпорт даних завершен успішно", JsonRequestBehavior.AllowGet);
+        }
+        [HttpGet]
+        [Authorize]
+        public FileResult GetAplicationStatus()
+        {
+            string file_path = Server.MapPath("~/Logs/InfoLog.log");
+            string file_type = "application/txt";
+            string file_name = "InfoLog.log";
+            return File(file_path, file_type, file_name);
+        }
+        [HttpGet]
+        [Authorize]
+        public FileResult GetAplicationError()
+        {
+            string file_path = Server.MapPath("~/Logs/ErrorAplicationLog.log");
+            string file_type = "application/txt";
+            string file_name = "ErrorAplicationLog.log";
+            return File(file_path, file_type, file_name);
         }
     }
 }
