@@ -79,18 +79,20 @@ namespace DataBaseMigrator.Controllers
         public FileResult GetAplicationStatus()
         {
             string file_path = Server.MapPath("~/Logs/InfoLog.log");
-            string file_type = "application/txt";
+            byte[] mas = System.IO.File.ReadAllBytes(file_path);
+            string file_type = "application/octet-stream";
             string file_name = "InfoLog.log";
-            return File(file_path, file_type, file_name);
+            return File(mas, file_type, file_name);
         }
         [HttpGet]
         [Authorize]
         public FileResult GetAplicationError()
         {
-            string file_path = Server.MapPath("~/Logs/ErrorAplicationLog.log");
-            string file_type = "application/txt";
+            string file_path = Server.MapPath("~/Logs/ErrorLog.log");
+            byte[] mas = System.IO.File.ReadAllBytes(file_path);
+            string file_type = "application/octet-stream";
             string file_name = "ErrorAplicationLog.log";
-            return File(file_path, file_type, file_name);
+            return File(mas, file_type, file_name);
         }
     }
 }

@@ -11,8 +11,10 @@
             @foreach (string f in Model.Keys)
             {
                 <div class="col-md-6">
-                    @Html.Label(f, f, new { @class = "control-label" })
-                </div>
+                    <div class="form-group">
+                        @Html.Label(f, f, new { @class = "control-label" })
+                        </div>
+                    </div>
             }
         </div>
         <div class="row">
@@ -48,7 +50,6 @@
         $(document).ready(function () {
             $('#Myform').submit(function (event) {
                 event.preventDefault();
-                debugger;
                 var sel1 = $("#Hor :selected").val();
                 var sel2 = $("#Tor :selected").val();
 
@@ -80,34 +81,10 @@
                 });
             });
             $('#GetInfo').click(function () {
-                debugger;
-                $.ajax({
-                    url: '/Migrator/GetAplicationStatus',
-                    dataType: "text",
-                    type: "GET",
-                    success: function(returnfil)
-                    {
-                        $(location).attr('href', "/Migrator/GetAplicationStatus?file=" + returnfil);
-                    },
-                    error: function ()
-                    {
-                        alert('File download failed!');
-                    }
-                });
+                $(location).attr('href', "/Migrator/GetAplicationStatus");
             });
             $('#GetError').click(function () {
-                debugger;
-                $.ajax({
-                    url: '/Migrator/GetAplicationError',
-                    dataType: "text",
-                    type: "GET",
-                    success: function (returnfil) {
-                        $(location).attr('href', "/Migrator/GetAplicationError?file=" + returnfil);
-                    },
-                    error: function () {
-                        alert('File download failed!');
-                    }
-                });
+                $(location).attr('href', "/Migrator/GetAplicationError");
             });
 
             $('#Out').click(function () {
