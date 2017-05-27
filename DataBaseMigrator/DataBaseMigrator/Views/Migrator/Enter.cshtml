@@ -88,6 +88,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('#EnterIn').submit(function (event) {
+            debugger;
             event.preventDefault();
             $('div[class="alert alert-danger"]').remove();
             var validate = $(this).serializeArray();
@@ -104,12 +105,15 @@
             if (status) {
                 $.ajax({
                     url: $(this).attr('action'),
-                    type: "POST",
+                    type: $(this).attr('method'),
                     data: validate,
                     dataType: "json",
+                    error: function (xhr)
+                    {
+                        alert(xhr.responseText);
+                    },
                     success: function (data)
                     {
-                        debugger;
                         if (data.hasOwnProperty('url')) {
                             $(location).attr('href', data.url);
                         }

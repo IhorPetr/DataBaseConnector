@@ -30,13 +30,12 @@ namespace DataBaseMigrator.Models
         [Display(Name = "Пароль:")]
         [DataType(DataType.Password)]
         public  string Password2 { get; set; }
-        public string StatusConnection { get; set; }
         public string GetVkdConnectionString() =>
             new SqlConnectionStringBuilder {
                 DataSource = ServerName1,
                 InitialCatalog= BDName1,
                 PersistSecurityInfo=true,
-                ConnectTimeout=0,
+                ConnectTimeout=1,
                 UserID=Login1,
                 Password=Password1
             }.ToString();
@@ -46,7 +45,7 @@ namespace DataBaseMigrator.Models
                 DataSource = ServerName2,
                 InitialCatalog = BDName2,
                 PersistSecurityInfo = true,
-                ConnectTimeout = 0,
+                ConnectTimeout = 1,
                 UserID = Login2,
                 Password = Password2
             }.ToString();

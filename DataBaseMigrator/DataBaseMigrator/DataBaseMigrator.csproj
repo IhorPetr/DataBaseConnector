@@ -155,9 +155,9 @@
     </Compile>
     <Compile Include="Infrastructure\ConnectionStringManger.cs" />
     <Compile Include="Infrastructure\CoreController.cs" />
-    <Compile Include="Infrastructure\RepositoryCore.cs" />
+    <Compile Include="Infrastructure\MigratorRepository.cs" />
     <Compile Include="Infrastructure\NLogCore.cs" />
-    <Compile Include="Interface\IRepositoryCore.cs" />
+    <Compile Include="Interface\IMigratorRepository.cs" />
     <Compile Include="Models\c_eE.cs" />
     <Compile Include="Models\eEmployees1.cs" />
     <Compile Include="Models\EnterStatus.cs" />

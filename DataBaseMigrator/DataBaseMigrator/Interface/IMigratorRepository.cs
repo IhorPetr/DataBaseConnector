@@ -7,8 +7,9 @@ using System.Data;
 
 namespace DataBaseMigrator.Interface
 {
-    public interface IRepositoryCore
+    public interface IMigratorRepository
     {
         Dictionary<string, DataTable> GetAllTables();
+        void UpdateCampusDatabase(string[] g);
     }
 }

@@ -13,8 +13,8 @@ namespace DataBaseMigrator.Controllers
 {
     public class MigratorController : CoreController
     {
-        private IRepositoryCore maindirectory;
-        public MigratorController(IRepositoryCore maindirectory)
+        private IMigratorRepository maindirectory;
+        public MigratorController(IMigratorRepository maindirectory)
         {
             this.maindirectory = maindirectory;
         }
@@ -40,8 +40,8 @@ namespace DataBaseMigrator.Controllers
         public ActionResult Enter(EnterStatus f)
         {
             var status = true;
-             status &= RepositoryCore.TestConnection(f.GetCampusConnectionString());
-             status &= RepositoryCore.TestConnection(f.GetVkdConnectionString());
+             status &= MigratorRepository.TestConnection(f.GetCampusConnectionString());
+             status &= MigratorRepository.TestConnection(f.GetVkdConnectionString());
              if(!status)
             {
                 return Json("Connection to Database Fail", JsonRequestBehavior.AllowGet);
@@ -58,6 +58,13 @@ namespace DataBaseMigrator.Controllers
         {
             FormsAuthentication.SignOut();
             return RedirectToAction("Enter");
+        }
+        [HttpPost]
+        [Authorize]
+        public ActionResult ProgressShow(string[] g)
+        {
+            maindirectory.UpdateCampusDatabase(g);
+            return View(maindirectory.GetAllTables());
         }
     }
 }

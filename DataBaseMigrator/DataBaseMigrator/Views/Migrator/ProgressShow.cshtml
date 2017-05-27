@@ -4,7 +4,8 @@
     ViewBag.Title = "ProgressShow";
     Layout = "~/Views/Shared/_MainDesign.cshtml";
 }
-<form>
+
+<form method="post" action="/Migrator/ProgressShow" id="Myform">
     <div class="modal-body">
         <div class="row">
             @foreach (string f in Model.Keys)
@@ -17,7 +18,7 @@
         <div class="row">
             <div class="col-md-6 ">
                 <div class="form-group">
-                    @Html.DropDownList("Ihor", new SelectList(Model["Список Представлень:"].Rows.Cast<DataRow>().Select(o => o["TABLE_NAME"]).ToList()), new { @class = "form-control" })
+                    @Html.DropDownList("Hor", new SelectList(Model["Список Представлень:"].Rows.Cast<DataRow>().Select(o => o["TABLE_NAME"]).ToList()), new { @class = "form-control" })
                 </div>
             </div>
             <div class="col-md-6">
@@ -35,26 +36,47 @@
                 </div>
             </div>
         </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" id="Out" class="btn btn-danger">Вихід</button>
-            <button type="button" class="btn btn-default">Показати звіт</button>
-            <button type="button" id="loadingbtn" data-loading-text="Зупинити" class="btn btn-primary">Почати</button>
-        </div>
-</form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" id="Out" class="btn btn-danger">Вихід</button>
+        <button type="button" class="btn btn-default">Показати звіт</button>
+        <button type="submit" class="btn btn-primary">Почати</button>
+    </div>
+    </form>
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#loadingbtn').click(function () {
+            $('#Myform').submit(function (event) {
+                event.preventDefault();
                 debugger;
-                var progress = 0;
-                $(this).button('loading');
-                setTimeout(function () {
-                    progress += 25;
-                    $('#loadingbtn').button('reset');
-                    $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress);
-                }, 2000);
-                $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress);
+                var sel1 = $("#Hor :selected").val();
+                var sel2 = $("#Tor :selected").val();
 
+                $.ajax({
+                    xhr: function () {
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.addEventListener('progress', function (e) {
+                            if (e.lengthComputable) {
+                                var progress = (100 * e.loaded / e.total);
+                                $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress).html(progress + '%');
+                            }
+                        });
+                        return xhr;
+                    },
+                    type: $(this).attr('method'),
+                    url: $(this).attr('action'),
+                    data: { 'g': [sel1, sel2] },
+                    dataType: "json",
+                    beforeSend: function () {
+                        $('.progress-bar').css('width', 0 + '%').attr('aria-valuenow', 0).html(0 + '%');
+                    },
+                    error: function (xhr)
+                    {
+                        alert(xhr.responseText);
+                    },
+                    success: function (response) {
+                        alert(response);
+                    }
+                });
             });
             $('#Out').click(function () {
                 $(location).attr('href', '@Url.Action("Out", "Migrator")');
