@@ -31,7 +31,9 @@ namespace DataBaseMigrator.Infrastructure
             DataCheck(ref t,ref y);
             Campus.LocalTable = t;
             Campus.UpdateDataBase();
-
+            DeleteCheck(ref t,ref y);
+            Campus.LocalTable = t;
+            Campus.UpdateDataBase();
         }
         public static bool TestConnection(string t)
         {
@@ -70,44 +72,6 @@ namespace DataBaseMigrator.Infrastructure
             NLogCore.LogStatusAplication("!----------------------!");
             NLogCore.LogStatusAplication("End updating database");
             NLogCore.LogStatusAplication("!----------------------!");
-        }
-    }
-
-    public abstract class MigratorCore
-    {
-        protected void DataCheck(ref DataTable campus,ref DataTable Vkd)
-        {
-            var EmployeeIdlist = Vkd.AsEnumerable().Select(y => y["ID_Employee"]).Distinct().ToList();
-            var vkdRows = Vkd.Rows.Cast<DataRow>().ToList();
-            var campusRows = campus.Rows.Cast<DataRow>().ToList();
-            for(int rowNumber=0;rowNumber< EmployeeIdlist.Count;rowNumber++)
-            {
-                var row = EmployeeIdlist[rowNumber];
-                NLogCore.LogStatusAplication(String.Format("DataCheck : {0} of {1}", rowNumber, EmployeeIdlist.Count));
-
-                var gottenEmployes = vkdRows.Where(o => o["ID_Employee"].ToString()==row.ToString()).ToList();
-                var existingEmployes = campusRows.Where(o => o["ID_Employee"].ToString() == row.ToString()).ToList();
-
-                if(gottenEmployes.Count==existingEmployes.Count)
-                {
-                    for (int i = 0; i < gottenEmployes.Count(); i++)
-                    {
-                        RowUpdate(existingEmployes[i], gottenEmployes[i]);
-                    }
-                }
-                if (gottenEmployes.Count > existingEmployes.Count)
-                {
-
-                }
-                if (gottenEmployes.Count < existingEmployes.Count)
-                {
-
-                }
-            }
-        }
-        private void RowUpdate(DataRow old,DataRow news)
-        {
-
         }
     }
 }

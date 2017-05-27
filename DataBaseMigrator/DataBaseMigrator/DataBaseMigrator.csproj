@@ -155,6 +155,7 @@
     </Compile>
     <Compile Include="Infrastructure\ConnectionStringManger.cs" />
     <Compile Include="Infrastructure\CoreController.cs" />
+    <Compile Include="Infrastructure\MigratorCore.cs" />
     <Compile Include="Infrastructure\MigratorRepository.cs" />
     <Compile Include="Infrastructure\NLogCore.cs" />
     <Compile Include="Interface\IMigratorRepository.cs" />
