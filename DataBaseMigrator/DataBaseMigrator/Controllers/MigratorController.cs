@@ -94,5 +94,12 @@ namespace DataBaseMigrator.Controllers
             string file_name = "ErrorAplicationLog.log";
             return File(mas, file_type, file_name);
         }
+        [HttpGet]
+        [Authorize]
+        public ActionResult ProgressBarCount(string y)
+        {
+            var t= maindirectory.GetProgressBarCount(y);
+            return Json(t, JsonRequestBehavior.AllowGet);
+        }
     }
 }

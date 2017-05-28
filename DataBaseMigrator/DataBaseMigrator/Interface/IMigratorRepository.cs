@@ -11,5 +11,6 @@ namespace DataBaseMigrator.Interface
     {
         Dictionary<string, DataTable> GetAllTables();
         void UpdateCampusDatabase(string[] g);
+        int GetProgressBarCount(string t);
     }
 }

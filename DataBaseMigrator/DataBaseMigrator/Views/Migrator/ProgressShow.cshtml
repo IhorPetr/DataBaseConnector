@@ -8,24 +8,26 @@
 <form method="post" action="/Migrator/ProgressShow" id="Myform">
     <div class="modal-body">
         <div class="row">
-            @foreach (string f in Model.Keys)
-            {
-                <div class="col-md-6">
-                    <div class="form-group">
-                        @Html.Label(f, f, new { @class = "control-label" })
-                        </div>
-                    </div>
-            }
-        </div>
-        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.Label(Model.ElementAt(0).Key.ToString(), Model.ElementAt(0).Key.ToString(), new { @class = "control-label" })
+                </div>
+            </div>
             <div class="col-md-6 ">
                 <div class="form-group">
-                    @Html.DropDownList("Hor", new SelectList(Model["Список Представлень:"].Rows.Cast<DataRow>().Select(o => o["TABLE_NAME"]).ToList()), new { @class = "form-control" })
+                    @Html.DropDownList("Hor", new SelectList(Model.ElementAt(0).Value.Rows.Cast<DataRow>().Select(o => o["TABLE_NAME"]).ToList()), new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.Label(Model.ElementAt(1).Key.ToString(), Model.ElementAt(1).Key.ToString(), new { @class = "control-label" })
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    @Html.DropDownList("Tor", new SelectList(Model["Список Таблиц:"].Rows.Cast<DataRow>().Select(o => o["TABLE_NAME"]).ToList()), new { @class = "form-control" })
+                    @Html.DropDownList("Tor", new SelectList(Model.ElementAt(1).Value.Rows.Cast<DataRow>().Select(o => o["TABLE_NAME"]).ToList()), new { @class = "form-control" })
                 </div>
             </div>
         </div>
@@ -50,41 +52,79 @@
         $(document).ready(function () {
             $('#Myform').submit(function (event) {
                 event.preventDefault();
+               // var ProgressCount;
+                var progress = 0;
                 var sel1 = $("#Hor :selected").val();
                 var sel2 = $("#Tor :selected").val();
-
+              /* $.ajax({
+                    type: "GET",
+                    url: 'Url.Action("ProgressBarCount", "Migrator")',
+                    data: { 'y': sel1 },
+                    dataType: "json",
+                    async: false,
+                    success: function (data) {
+                        ProgressCount = JSON.parse(data);
+                    },
+                    error: function (r) {
+                        alert(r);
+                    }
+                });*/
+                var progressStart = setInterval(function () {
+                    debugger;
+                    //var Status = 100 / ProgressCount;
+                    progress +=1;
+                    if(progress<=100)
+                    {
+                        $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress).html('Обработка...');
+                    }
+                    else
+                    {
+                        progress = 0;
+                        $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress).html('Обработка...');
+                    }
+                }, 1000);
                 $.ajax({
-                    xhr: function () {
+                   /* xhr: function () {
                         var xhr = new window.XMLHttpRequest();
-                        xhr.addEventListener('progress', function (e) {
-                            if (e.lengthComputable) {
-                                var progress = (100 * e.loaded / e.total);
+                        xhr.upload.addEventListener("progress", function (evt) {
+                            if (evt.lengthComputable) {
+                                var progresst = evt.loaded / evt.total;
+                                progress = progress + progresst;
+                                console.log(progress);
                                 $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress).html(progress + '%');
                             }
-                        });
+                        }, false);
+                        xhr.addEventListener('progress', function (e) {
+                            if (e.lengthComputable) {
+                                var progresst = e.loaded / e.total;
+                                progress = progress + progresst;
+                                console.log(progress);
+                                $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress).html(progress + '%');
+                            }
+                        }, false);
                         return xhr;
-                    },
+                    },*/
                     type: $(this).attr('method'),
                     url: $(this).attr('action'),
                     data: { 'g': [sel1, sel2] },
                     dataType: "json",
-                    beforeSend: function () {
-                        $('.progress-bar').css('width', 0 + '%').attr('aria-valuenow', 0).html(0 + '%');
-                    },
                     error: function (xhr)
                     {
                         alert(xhr.responseText);
+                        clearInterval(progressStart);
                     },
                     success: function (response) {
                         alert(response);
+                        clearInterval(progressStart);
+                        $('.progress-bar').css('width', 100 + '%').attr('aria-valuenow', 100).html('Завершено...');
                     }
                 });
             });
             $('#GetInfo').click(function () {
-                $(location).attr('href', "/Migrator/GetAplicationStatus");
+                $(location).attr('href', '@Url.Action("GetAplicationStatus", "Migrator")');
             });
             $('#GetError').click(function () {
-                $(location).attr('href', "/Migrator/GetAplicationError");
+                $(location).attr('href', '@Url.Action("GetAplicationError", "Migrator")');
             });
 
             $('#Out').click(function () {

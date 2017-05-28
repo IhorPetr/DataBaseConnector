@@ -26,14 +26,12 @@ namespace DataBaseMigrator.Infrastructure
         {
             var Campus = new BaseCore(ConnectionStringManger.CampusBd,String.Format("SELECT * FROM {0}", g[1]));
             var Vkd = new BaseCore(ConnectionStringManger.VkdBd, String.Format("SELECT * FROM {0}", g[0]));
-            var t = Campus.LocalTable;
+           var t = Campus.LocalTable;
             var y = Vkd.LocalTable;
             DataCheck(ref t,ref y);
-            Campus.LocalTable = t;
-            Campus.UpdateDataBase();
-            DeleteCheck(ref t,ref y);
-            Campus.LocalTable = t;
-            Campus.UpdateDataBase();
+            Campus.UpdateDataBase(t);
+             DeleteCheck(ref t,ref y);
+            Campus.UpdateDataBase(t);
         }
         public static bool TestConnection(string t)
         {
@@ -52,6 +50,11 @@ namespace DataBaseMigrator.Infrastructure
             }
             return true;
         }
+        public int GetProgressBarCount(string t)
+        {
+            var Vkd = new BaseCore(ConnectionStringManger.VkdBd, String.Format("SELECT Count( distinct ID_Employee) as cou FROM {0}", t));
+            return Convert.ToInt32(Vkd.LocalTable.AsEnumerable().Select(o => o["cou"]).ElementAt(0));
+        }
     }
     class BaseCore
     {
@@ -63,12 +66,13 @@ namespace DataBaseMigrator.Infrastructure
             baseCon1 = new SqlDataAdapter(query,new SqlConnection(con));
             baseCon1.Fill(LocalTable);
         }
-        public void UpdateDataBase()
+        public void UpdateDataBase(DataTable t)
         {
+            SqlCommandBuilder commandBuilder = new SqlCommandBuilder(baseCon1);
             NLogCore.LogStatusAplication("!----------------------!");
             NLogCore.LogStatusAplication("Start updating database");
             NLogCore.LogStatusAplication("!----------------------!");
-            baseCon1.Update(LocalTable);
+            baseCon1.Update(t);
             NLogCore.LogStatusAplication("!----------------------!");
             NLogCore.LogStatusAplication("End updating database");
             NLogCore.LogStatusAplication("!----------------------!");
