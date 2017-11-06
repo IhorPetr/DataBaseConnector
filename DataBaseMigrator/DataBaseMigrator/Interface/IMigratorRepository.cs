@@ -10,7 +10,7 @@ namespace DataBaseMigrator.Interface
     public interface IMigratorRepository
     {
         Dictionary<string, DataTable> GetAllTables();
-        void UpdateCampusDatabase(string[] g);
+        Task UpdateCampusDatabase(string[] g);
         int GetProgressBarCount(string t);
     }
 }

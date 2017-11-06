@@ -34,8 +34,8 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="progress progress-striped active">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
-                        45%
+                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                        0%
                     </div>
                 </div>
             </div>
@@ -108,10 +108,10 @@
                     url: $(this).attr('action'),
                     data: { 'g': [sel1, sel2] },
                     dataType: "json",
-                    error: function (xhr)
-                    {
+                    error: function (xhr) {
                         alert(xhr.responseText);
                         clearInterval(progressStart);
+                        $('.progress-bar').css('width', 100 + '%').attr('aria-valuenow', 100).html('Ошибка...');
                     },
                     success: function (response) {
                         alert(response);

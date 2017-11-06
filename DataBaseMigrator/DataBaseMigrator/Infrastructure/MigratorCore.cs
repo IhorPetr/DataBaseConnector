@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Data;
+using System.Security.Cryptography.Pkcs;
+using System.Web.UI;
+using DataBaseMigrator.Models.Config;
 
 namespace DataBaseMigrator.Infrastructure
 {
@@ -12,16 +15,22 @@ namespace DataBaseMigrator.Infrastructure
         {
             int _maximum = campus.Rows.Count == 0 ? 1 : campus.Rows.Cast<DataRow>().Select(p => Convert.ToInt32(p["eEmployees1Id"])).Max() + 1;
 
-            var EmployeeIdlist = Vkd.AsEnumerable().Select(y => y["ID_employee"]).Distinct().ToList();
+            var EmployeeIdlist = Vkd.AsEnumerable().Select(y =>new
+            {
+                EmpId= y["ID_employee"],
+                SubId= y["ID_Subdivision"]
+            }).Distinct().ToList();
+           
             var vkdRows = Vkd.Rows.Cast<DataRow>().ToList();
             var campusRows = campus.Rows.Cast<DataRow>().ToList();
             for (int rowNumber = 0; rowNumber < EmployeeIdlist.Count; rowNumber++)
             {
                 var row = EmployeeIdlist[rowNumber];
+
                 NLogCore.LogStatusAplication(String.Format("DataCheck : {0} of {1}", rowNumber, EmployeeIdlist.Count));
 
-                var gottenEmployes = vkdRows.Where(o => o["ID_employee"].ToString() == row.ToString()).ToList();
-                var existingEmployes = campusRows.Where(t => t["ID_employee"].ToString() == row.ToString()).ToList();
+                var gottenEmployes = vkdRows.Where(o => o["ID_employee"].ToString() == row.EmpId.ToString() && o["ID_Subdivision"].ToString() == row.SubId.ToString()).ToList();
+                var existingEmployes = campusRows.Where(t => t["ID_employee"].ToString() == row.EmpId.ToString() && t["ID_Subdivision"].ToString() == row.SubId.ToString()).ToList();
 
                 if (gottenEmployes.Count == existingEmployes.Count)
                 {
@@ -160,99 +169,31 @@ namespace DataBaseMigrator.Infrastructure
         #region DataBaseConventorHelper
         private void RowUpdate(DataRow oldRow, DataRow newRow)
         {
-            List<string> columns = new List<string>();
-            List<string> newVals = new List<string>();
-            bool flag = false;
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "ID_Employee") ;
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "Surname");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "Name");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "Patronymic");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "ID_Sex");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "SexName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "id_sector");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "SectorName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "ID_Subdivision");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "SubdivName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "ID_Duties");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "DutiesName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "Id_DutiesSubtype");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "DutiesSubTypeName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "ID_Group");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "GroupName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "ContractDocumentEndDate");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "ID_AcademicDegree");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "ID_DCAcademicDegree");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "AcademicDegreeName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "AcademicDegreeDate");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "ID_AcademicStatus");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "ID_DCAcademicStatus");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "AcademicStatusName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "AcademicStatusDate");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "IDEmploymentForm");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "EmploymentActivityCategory");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "EmploymentPersonStatusType");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "DoplataName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "NadbavkaName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "IdRtStaffHoliday");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "StaffHolidaysType");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "StaffHolidaysSubtype");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "StaffHolidaysKind");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "DoplatiDuties");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "DoplatiDutiesSubtype");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "DoplatiSector");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "DoplatiSubdivision");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "DoplatiGroup");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "NadbavkaDuties");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "NadbavkaDutiesSubtype");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "NadbavkaSector");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "NadbavkaSubdivision");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "NadbavkaGroup");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "NadbavkaDutiesName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "NadbavkaDutiesSubtypeName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "NadbavkaSectorName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "NadbavkaSubdivisionName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "NadbavkaGroupName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "DoplatiDutiesName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "DoplatiDutiesSubtypeName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "DoplatiSectorName");
-            flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "DoplatiSubdivisionName");
-            if ((CellUpdate(ref oldRow, newRow, ref columns, ref newVals, "DoplatiGroupName") || flag) || (oldRow["vcChangeStatus"].ToString() == "Видалено"))
+            if (oldRow["vcChangeStatus"].ToString() != "Видалено")
             {
-                oldRow["vcChangeDate"] = DateTime.Now;
-                oldRow["vcChangeStatus"] = "Оновлено";
-                for (int i = 0; i < newVals.Count; i++)
+                List<string> columns = new List<string>();
+                List<string> newVals = new List<string>();
+                bool flag = false;
+                foreach (var columname in CountNameColumn.NameColumn)
                 {
-                    NLogCore.LogStatusAplication("Запис з ідентифікатором eEmployees1Id=" + oldRow["eEmployees1Id"].ToString() + " змінено: значення поля " + columns[i].ToString() + " замінено на " + newVals[i].ToString());
+                    flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, columname);
+                }
+                if (flag)
+                {
+                    oldRow["vcChangeDate"] = DateTime.Now;
+                    oldRow["vcChangeStatus"] = "Оновлено";
+                    for (int i = 0; i < newVals.Count; i++)
+                    {
+                        NLogCore.LogStatusAplication("Запис з ідентифікатором eEmployees1Id=" +
+                                                     oldRow["eEmployees1Id"].ToString() + " змінено: значення поля " +
+                                                     columns[i].ToString() + " замінено на " + newVals[i].ToString());
+                    }
                 }
             }
         }
         private bool CellUpdate(ref DataRow oldRow, DataRow newRow, ref List<string> columns, ref List<string> newVals, string colName)
         {
             bool flag = false;
-            if (colName == "IdRtStaffHoliday")
-            {
-                try
-                {
-                    if (oldRow["IdRtStaffHoliday"].ToString() != newRow["IdStaffHolidays"].ToString())
-                    {
-                        oldRow["IdRtStaffHoliday"] = newRow["IdStaffHolidays"];
-                        columns.Add(colName);
-                        newVals.Add(newRow["IdStaffHolidays"].ToString());
-                        flag = true;
-                    }
-                }
-                catch
-                {
-                    if (oldRow["IdRtStaffHoliday"].ToString() != newRow["IdRtStaffHoliday"].ToString())
-                    {
-                        oldRow["IdRtStaffHoliday"] = newRow["IdRtStaffHoliday"];
-                        columns.Add(colName);
-                        newVals.Add(newRow[colName].ToString());
-                        flag = true;
-                    }
-                }
-                return flag;
-            }
             if (oldRow[colName].ToString() != newRow[colName].ToString())
             {
                 oldRow[colName] = newRow[colName];
@@ -265,67 +206,10 @@ namespace DataBaseMigrator.Infrastructure
         private void CloneRow(DataRow sourceRow, int employeesId, ref DataRow newRow)
         {
             newRow["eEmployees1Id"] = employeesId;
-            newRow["ID_employee"] = sourceRow["ID_employee"];
-            newRow["Surname"] = sourceRow["Surname"];
-            newRow["Name"] = sourceRow["Name"];
-            newRow["Patronymic"] = sourceRow["Patronymic"];
-            newRow["ID_Sex"] = sourceRow["ID_Sex"];
-            newRow["SexName"] = sourceRow["SexName"];
-            newRow["id_sector"] = sourceRow["id_sector"];
-            newRow["SectorName"] = sourceRow["SectorName"];
-            newRow["ID_Subdivision"] = sourceRow["ID_Subdivision"];
-            newRow["SubdivName"] = sourceRow["SubdivName"];
-            newRow["ID_Duties"] = sourceRow["ID_Duties"];
-            newRow["DutiesName"] = sourceRow["DutiesName"];
-            newRow["Id_DutiesSubtype"] = sourceRow["Id_DutiesSubtype"];
-            newRow["DutiesSubTypeName"] = sourceRow["DutiesSubTypeName"];
-            newRow["ID_Group"] = sourceRow["ID_Group"];
-            newRow["GroupName"] = sourceRow["GroupName"];
-            newRow["ContractDocumentEndDate"] = sourceRow["ContractDocumentEndDate"];
-            newRow["ID_AcademicDegree"] = sourceRow["ID_AcademicDegree"];
-            newRow["ID_DCAcademicDegree"] = sourceRow["ID_DCAcademicDegree"];
-            newRow["AcademicDegreeName"] = sourceRow["AcademicDegreeName"];
-            newRow["AcademicDegreeDate"] = sourceRow["AcademicDegreeDate"];
-            newRow["ID_AcademicStatus"] = sourceRow["ID_AcademicStatus"];
-            newRow["ID_DCAcademicStatus"] = sourceRow["ID_DCAcademicStatus"];
-            newRow["AcademicStatusName"] = sourceRow["AcademicStatusName"];
-            newRow["AcademicStatusDate"] = sourceRow["AcademicStatusDate"];
-            newRow["IDEmploymentForm"] = sourceRow["IDEmploymentForm"];
-            newRow["EmploymentActivityCategory"] = sourceRow["EmploymentActivityCategory"];
-            newRow["EmploymentPersonStatusType"] = sourceRow["EmploymentPersonStatusType"];
-            newRow["DoplataName"] = sourceRow["DoplataName"];
-            newRow["NadbavkaName"] = sourceRow["NadbavkaName"];
-            try
+            foreach (var columname in CountNameColumn.NameColumn)
             {
-                newRow["IdRtStaffHoliday"] = sourceRow["IdRtStaffHoliday"];
+                newRow[columname] = sourceRow[columname];
             }
-            catch
-            {
-                newRow["IdRtStaffHoliday"] = sourceRow["IdStaffHolidays"];
-            }
-            newRow["StaffHolidaysType"] = sourceRow["StaffHolidaysType"];
-            newRow["StaffHolidaysSubtype"] = sourceRow["StaffHolidaysSubtype"];
-            newRow["StaffHolidaysKind"] = sourceRow["StaffHolidaysKind"];
-            newRow["DoplatiDuties"] = sourceRow["DoplatiDuties"];
-            newRow["DoplatidutiesSubtype"] = sourceRow["DoplatidutiesSubtype"];
-            newRow["DoplatiSector"] = sourceRow["DoplatiSector"];
-            newRow["Doplatisubdivision"] = sourceRow["Doplatisubdivision"];
-            newRow["DoplatiGroup"] = sourceRow["DoplatiGroup"];
-            newRow["Nadbavkaduties"] = sourceRow["Nadbavkaduties"];
-            newRow["NadbavkaDutiesSubtype"] = sourceRow["NadbavkaDutiesSubtype"];
-            newRow["NadbavkaSector"] = sourceRow["NadbavkaSector"];
-            newRow["NadbavkaSubdivision"] = sourceRow["NadbavkaSubdivision"];
-            newRow["NadbavkaGroup"] = sourceRow["NadbavkaGroup"];
-            newRow["NadbavkaDutiesName"] = sourceRow["NadbavkaDutiesName"];
-            newRow["NadbavkaDutiesSubtypeName"] = sourceRow["NadbavkaDutiesSubtypeName"];
-            newRow["NadbavkaSectorName"] = sourceRow["NadbavkaSectorName"];
-            newRow["NadbavkagroupName"] = sourceRow["NadbavkagroupName"];
-            newRow["NadbavkaSubdivisionName"] = sourceRow["NadbavkaSubdivisionName"];
-            newRow["DoplatiDutiesName"] = sourceRow["DoplatiDutiesName"];
-            newRow["DoplatiDutiesSubTypeName"] = sourceRow["DoplatiDutiesSubTypeName"];
-            newRow["DoplatiSectorName"] = sourceRow["DoplatiSectorName"];
-            newRow["DoplatiSubdivisionName"] = sourceRow["DoplatiSubdivisionName"];
-            newRow["DoplatiGroupName"] = sourceRow["DoplatiGroupName"];
             newRow["vcChangeDate"] = DateTime.Now;
             newRow["vcChangeStatus"] = "Створено";
         }

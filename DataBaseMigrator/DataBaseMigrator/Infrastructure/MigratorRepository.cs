@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Data;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 using DataBaseMigrator.Interface;
 
 namespace DataBaseMigrator.Infrastructure
@@ -22,14 +23,14 @@ namespace DataBaseMigrator.Infrastructure
                 ["Список Таблиц:"] = Campus.LocalTable
             };
         } 
-        public void UpdateCampusDatabase(string[] g)
+        public  void UpdateCampusDatabase(string[] g)
         {
             var Campus = new BaseCore(ConnectionStringManger.CampusBd,String.Format("SELECT * FROM {0}", g[1]));
             var Vkd = new BaseCore(ConnectionStringManger.VkdBd, String.Format("SELECT * FROM {0}", g[0]));
            var t = Campus.LocalTable;
             var y = Vkd.LocalTable;
-            DataCheck(ref t,ref y);
-            Campus.UpdateDataBase(t);
+             DataCheck(ref t,ref y);
+             Campus.UpdateDataBase(t);
              DeleteCheck(ref t,ref y);
             Campus.UpdateDataBase(t);
         }

@@ -8,6 +8,7 @@ using DataBaseMigrator.Models;
 using DataBaseMigrator.Infrastructure;
 using DataBaseMigrator.Interface;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace DataBaseMigrator.Controllers
 {
@@ -61,11 +62,11 @@ namespace DataBaseMigrator.Controllers
         }
         [HttpPost]
         [Authorize]
-        public ActionResult ProgressShow(string[] g)
+        public async Task<ActionResult> ProgressShow(string[] g)
         {
             try
             {
-                maindirectory.UpdateCampusDatabase(g);
+               maindirectory.UpdateCampusDatabase(g);
             }
             catch(Exception ex)
             {
