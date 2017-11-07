@@ -8,6 +8,7 @@ using DataBaseMigrator.Models;
 using DataBaseMigrator.Infrastructure;
 using DataBaseMigrator.Interface;
 using System.Data;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace DataBaseMigrator.Controllers
@@ -70,16 +71,24 @@ namespace DataBaseMigrator.Controllers
             }
             catch(Exception ex)
             {
-                NLogCore.LogAplicationError(ex);
+                NLogCore.LogAplicationError(ex.Message);
                 return Json(ex.ToString(), JsonRequestBehavior.AllowGet);
             }
             return Json("Імпорт даних завершен успішно", JsonRequestBehavior.AllowGet);
         }
         [HttpGet]
         [Authorize]
-        public FileResult GetAplicationStatus()
+        public ActionResult GetAplicationStatus()
         {
+           
             string file_path = Server.MapPath("~/Logs/InfoLog.log");
+            if (!System.IO.File.Exists(file_path))
+            {
+              return Content("<script language='javascript' type='text/javascript'>" +
+                        "alert('File doesn`t exist!');" +
+                        "window.location.href='/Migrator/ProgressShow'" +
+                        "</script>");
+            }
             byte[] mas = System.IO.File.ReadAllBytes(file_path);
             string file_type = "application/octet-stream";
             string file_name = "InfoLog.log";
@@ -87,12 +96,20 @@ namespace DataBaseMigrator.Controllers
         }
         [HttpGet]
         [Authorize]
-        public FileResult GetAplicationError()
+        public ActionResult GetAplicationError()
         {
             string file_path = Server.MapPath("~/Logs/ErrorLog.log");
+            if (!System.IO.File.Exists(file_path))
+            {
+                return Content("<script language='javascript' type='text/javascript'>" +
+                        "alert('File doesn`t exist!');" +
+                        "window.location.href='/Migrator/ProgressShow'"+
+                        "</script>");
+            }
             byte[] mas = System.IO.File.ReadAllBytes(file_path);
+
             string file_type = "application/octet-stream";
-            string file_name = "ErrorAplicationLog.log";
+            string file_name = "ErrorLog.log";
             return File(mas, file_type, file_name);
         }
         [HttpGet]

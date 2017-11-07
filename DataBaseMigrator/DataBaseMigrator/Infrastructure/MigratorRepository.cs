@@ -46,7 +46,7 @@ namespace DataBaseMigrator.Infrastructure
             }
             catch (SqlException ex)
             {
-                NLogCore.LogAplicationError(ex);
+                NLogCore.LogAplicationError(ex.Message);
                 return false;
             }
             return true;

@@ -70,9 +70,8 @@
                     }
                 });*/
                 var progressStart = setInterval(function () {
-                    debugger;
                     //var Status = 100 / ProgressCount;
-                    progress +=1;
+                    progress +=5;
                     if(progress<=100)
                     {
                         $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress).html('Обработка...');
@@ -127,9 +126,9 @@
                 $(location).attr('href', '@Url.Action("GetAplicationError", "Migrator")');
             });
 
-            $('#Out').click(function () {
+            $('#Out').click(function() {
                 $(location).attr('href', '@Url.Action("Out", "Migrator")');
-            })
+            });
         });
     </script>
 
