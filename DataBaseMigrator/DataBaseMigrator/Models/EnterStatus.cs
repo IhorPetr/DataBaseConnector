@@ -35,7 +35,8 @@ namespace DataBaseMigrator.Models
                 DataSource = ServerName1,
                 InitialCatalog= BDName1,
                 PersistSecurityInfo=true,
-                ConnectTimeout=3,
+             //   ConnectTimeout= 120,
+                
                 UserID=Login1,
                 Password=Password1
             }.ToString();
@@ -45,7 +46,7 @@ namespace DataBaseMigrator.Models
                 DataSource = ServerName2,
                 InitialCatalog = BDName2,
                 PersistSecurityInfo = true,
-                ConnectTimeout = 3,
+               // ConnectTimeout = 120,
                 UserID = Login2,
                 Password = Password2
             }.ToString();

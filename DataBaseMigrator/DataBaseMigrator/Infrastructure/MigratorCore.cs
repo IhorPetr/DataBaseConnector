@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Data;
+using System.Data.SqlClient;
 using System.Security.Cryptography.Pkcs;
 using System.Web.UI;
 using DataBaseMigrator.Models.Config;
@@ -17,8 +18,8 @@ namespace DataBaseMigrator.Infrastructure
 
             var EmployeeIdlist = Vkd.AsEnumerable().Select(y =>new
             {
-                EmpId= y["ID_employee"],
-                SubId= y["ID_Subdivision"]
+                EmpId=y["ID_employee"],
+                SubId=y["ID_Subdivision"]
             }).Distinct().ToList();
            
             var vkdRows = Vkd.Rows.Cast<DataRow>().ToList();
@@ -29,8 +30,14 @@ namespace DataBaseMigrator.Infrastructure
 
                 NLogCore.LogStatusAplication(String.Format("DataCheck : {0} of {1}", rowNumber, EmployeeIdlist.Count));
 
-                var gottenEmployes = vkdRows.Where(o => o["ID_employee"].ToString() == row.EmpId.ToString() && o["ID_Subdivision"].ToString() == row.SubId.ToString()).ToList();
-                var existingEmployes = campusRows.Where(t => t["ID_employee"].ToString() == row.EmpId.ToString() && t["ID_Subdivision"].ToString() == row.SubId.ToString()).ToList();
+                var gottenEmployes = vkdRows.Where(o => o["ID_employee"].ToString() == row.EmpId.ToString() 
+                && o["ID_Subdivision"].ToString() == row.SubId.ToString())
+                //.OrderBy(e=>e["ContractDocumentEndDate"].ToString())
+                .ToList();
+                var existingEmployes = campusRows.Where(t => t["ID_employee"].ToString() == row.EmpId.ToString() 
+                && t["ID_Subdivision"].ToString() == row.SubId.ToString())
+                //.OrderBy(e => e["ContractDocumentEndDate"].ToString())
+                .ToList();
 
                 if (gottenEmployes.Count == existingEmployes.Count)
                 {
@@ -141,7 +148,7 @@ namespace DataBaseMigrator.Infrastructure
         }
         protected void DeleteCheck(ref DataTable campus, ref DataTable Vkd)
         {
-            var employeesId = campus.AsEnumerable().Select(o => o["ID_Employee"]).Distinct();
+            var employeesId = campus.AsEnumerable().Select(o => o["ID_employee"]).Distinct();
 
             foreach (var ident in employeesId)
             {
@@ -151,7 +158,7 @@ namespace DataBaseMigrator.Infrastructure
 
                 if (!empl.Any())
                 {
-                    var employees = campus.Select("ID_Employee=" + ident);
+                    var employees = campus.Select("ID_employee=" + ident);
 
                     foreach (var row in employees)
                     {
@@ -169,8 +176,6 @@ namespace DataBaseMigrator.Infrastructure
         #region DataBaseConventorHelper
         private void RowUpdate(DataRow oldRow, DataRow newRow)
         {
-            if (oldRow["vcChangeStatus"].ToString() != "Видалено")
-            {
                 List<string> columns = new List<string>();
                 List<string> newVals = new List<string>();
                 bool flag = false;
@@ -189,11 +194,34 @@ namespace DataBaseMigrator.Infrastructure
                                                      columns[i].ToString() + " замінено на " + newVals[i].ToString());
                     }
                 }
-            }
         }
         private bool CellUpdate(ref DataRow oldRow, DataRow newRow, ref List<string> columns, ref List<string> newVals, string colName)
         {
             bool flag = false;
+            if (colName == "IdRtStaffHoliday")
+            {
+                try
+                {
+                    if (oldRow["IdRtStaffHoliday"].ToString() != newRow["IdStaffHolidays"].ToString())
+                    {
+                        oldRow["IdRtStaffHoliday"] = newRow["IdStaffHolidays"];
+                        columns.Add(colName);
+                        newVals.Add(newRow["IdStaffHolidays"].ToString());
+                        flag = true;
+                    }
+                }
+                catch
+                {
+                    if (oldRow["IdRtStaffHoliday"].ToString() != newRow["IdRtStaffHoliday"].ToString())
+                    {
+                        oldRow["IdRtStaffHoliday"] = newRow["IdRtStaffHoliday"];
+                        columns.Add(colName);
+                        newVals.Add(newRow[colName].ToString());
+                        flag = true;
+                    }
+                }
+                return flag;
+            }
             if (oldRow[colName].ToString() != newRow[colName].ToString())
             {
                 oldRow[colName] = newRow[colName];
@@ -205,13 +233,38 @@ namespace DataBaseMigrator.Infrastructure
         }
         private void CloneRow(DataRow sourceRow, int employeesId, ref DataRow newRow)
         {
-            newRow["eEmployees1Id"] = employeesId;
-            foreach (var columname in CountNameColumn.NameColumn)
+            using (SqlConnection connection = new SqlConnection(ConnectionStringManger.CampusBd))
             {
-                newRow[columname] = sourceRow[columname];
+                connection.Open();
+                var Fullname = sourceRow["Surname"].ToString() + ' ' + sourceRow["Name"].ToString() + ' ' +
+                        sourceRow["Patronymic"].ToString();
+                var cmd = new SqlCommand($"select TOP 1 UserAccountId from UserAccount where FullName=@Fullname"
+                    ,connection);
+                cmd.Parameters.Add("@Fullname",SqlDbType.NVarChar);
+                cmd.Parameters["@Fullname"].Value = Fullname;
+                var result = cmd.ExecuteReader();
+                int? userid = null;
+                if (result.HasRows)
+                {
+                    result.Read();
+                     userid = result.GetInt32(0);
+                }
+                newRow["eEmployees1Id"] = employeesId;
+                foreach (var columname in CountNameColumn.NameColumn)
+                {
+                    try
+                    {
+                        newRow[columname] = sourceRow[columname];
+                    }
+                    catch
+                    {
+                        newRow["IdRtStaffHoliday"] = sourceRow["IdStaffHolidays"];
+                    }
+                }
+                newRow["UserAccountId"] = userid;
+                newRow["vcChangeDate"] = DateTime.Now;
+                newRow["vcChangeStatus"] = "Створено";
             }
-            newRow["vcChangeDate"] = DateTime.Now;
-            newRow["vcChangeStatus"] = "Створено";
         }
         #endregion
     }

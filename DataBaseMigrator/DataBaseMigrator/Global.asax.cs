@@ -19,7 +19,7 @@ namespace DataBaseMigrator
         protected void Application_Error()
         {
             Exception lastException = Server.GetLastError();
-            NLogCore.LogAplicationError(lastException);
+            NLogCore.LogAplicationError(lastException.Message);
         }
     }
 }
