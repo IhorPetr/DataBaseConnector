@@ -176,24 +176,28 @@ namespace DataBaseMigrator.Infrastructure
         #region DataBaseConventorHelper
         private void RowUpdate(DataRow oldRow, DataRow newRow)
         {
-                List<string> columns = new List<string>();
-                List<string> newVals = new List<string>();
-                bool flag = false;
-                foreach (var columname in CountNameColumn.NameColumn)
-                {
-                    flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, columname);
-                }
-                if (flag)
-                {
-                    oldRow["vcChangeDate"] = DateTime.Now;
-                    oldRow["vcChangeStatus"] = "Оновлено";
-                    for (int i = 0; i < newVals.Count; i++)
-                    {
-                        NLogCore.LogStatusAplication("Запис з ідентифікатором eEmployees1Id=" +
-                                                     oldRow["eEmployees1Id"].ToString() + " змінено: значення поля " +
-                                                     columns[i].ToString() + " замінено на " + newVals[i].ToString());
-                    }
-                }
+           List<string> columns = new List<string>();
+           List<string> newVals = new List<string>();
+           bool flag = false;
+           foreach (var columname in CountNameColumn.NameColumn)
+           {
+               flag |= CellUpdate(ref oldRow, newRow, ref columns, ref newVals, columname);
+           }
+               
+           if (flag)
+           {
+               oldRow["UserAccountId"] = GetUserAccountID(newRow); 
+               oldRow["vcChangeDate"] = DateTime.Now;
+               oldRow["vcChangeStatus"] = "Оновлено";
+               for (int i = 0; i < newVals.Count; i++)
+               {
+                  NLogCore.LogStatusAplication("Запис з ідентифікатором eEmployees1Id=" +
+                                               oldRow["eEmployees1Id"].ToString() +
+                                               " змінено: значення поля " +
+                                               columns[i].ToString() + " замінено на " +
+                                               newVals[i].ToString());
+                }                    
+           }      
         }
         private bool CellUpdate(ref DataRow oldRow, DataRow newRow, ref List<string> columns, ref List<string> newVals, string colName)
         {
@@ -233,22 +237,6 @@ namespace DataBaseMigrator.Infrastructure
         }
         private void CloneRow(DataRow sourceRow, int employeesId, ref DataRow newRow)
         {
-            using (SqlConnection connection = new SqlConnection(ConnectionStringManger.CampusBd))
-            {
-                connection.Open();
-                var Fullname = sourceRow["Surname"].ToString() + ' ' + sourceRow["Name"].ToString() + ' ' +
-                        sourceRow["Patronymic"].ToString();
-                var cmd = new SqlCommand($"select TOP 1 UserAccountId from UserAccount where FullName=@Fullname"
-                    ,connection);
-                cmd.Parameters.Add("@Fullname",SqlDbType.NVarChar);
-                cmd.Parameters["@Fullname"].Value = Fullname;
-                var result = cmd.ExecuteReader();
-                int? userid = null;
-                if (result.HasRows)
-                {
-                    result.Read();
-                     userid = result.GetInt32(0);
-                }
                 newRow["eEmployees1Id"] = employeesId;
                 foreach (var columname in CountNameColumn.NameColumn)
                 {
@@ -261,9 +249,31 @@ namespace DataBaseMigrator.Infrastructure
                         newRow["IdRtStaffHoliday"] = sourceRow["IdStaffHolidays"];
                     }
                 }
-                newRow["UserAccountId"] = userid;
+                newRow["UserAccountId"] = GetUserAccountID(sourceRow);
                 newRow["vcChangeDate"] = DateTime.Now;
                 newRow["vcChangeStatus"] = "Створено";
+            
+        }
+
+        private int? GetUserAccountID(DataRow currentrow)
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionStringManger.CampusBd))
+            {
+                connection.Open();
+                var Fullname = currentrow["Surname"].ToString() + ' ' + currentrow["Name"].ToString() + ' ' +
+                               currentrow["Patronymic"].ToString();
+                var cmd = new SqlCommand($"select TOP 1 UserAccountId from UserAccount where FullName=@Fullname"
+                    , connection);
+                cmd.Parameters.Add("@Fullname", SqlDbType.NVarChar);
+                cmd.Parameters["@Fullname"].Value = Fullname;
+                var result = cmd.ExecuteReader();
+                int? userid = null;
+                if (result.HasRows)
+                {
+                    result.Read();
+                    userid = result.GetInt32(0);
+                }
+                return userid;
             }
         }
         #endregion
