@@ -9,6 +9,7 @@ using DataBaseMigrator.Infrastructure;
 using DataBaseMigrator.Interface;
 using System.Data;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace DataBaseMigrator.Controllers
@@ -72,7 +73,8 @@ namespace DataBaseMigrator.Controllers
             catch(Exception ex)
             {
                 NLogCore.LogAplicationError(ex.Message);
-                return Json(ex.ToString(), JsonRequestBehavior.AllowGet);
+                Response.StatusCode = 500;
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
             }
             return Json("Імпорт даних завершен успішно", JsonRequestBehavior.AllowGet);
         }

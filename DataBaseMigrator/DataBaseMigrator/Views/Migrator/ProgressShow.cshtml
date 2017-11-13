@@ -108,7 +108,7 @@
                     data: { 'g': [sel1, sel2] },
                     dataType: "json",
                     error: function (xhr) {
-                        alert(xhr.responseText);
+                        alert(JSON.parse(xhr.responseText).error);
                         clearInterval(progressStart);
                         $('.progress-bar').css('width', 100 + '%').attr('aria-valuenow', 100).html('Ошибка...');
                     },

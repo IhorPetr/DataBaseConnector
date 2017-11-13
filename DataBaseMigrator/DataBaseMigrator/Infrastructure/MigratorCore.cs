@@ -32,18 +32,32 @@ namespace DataBaseMigrator.Infrastructure
 
                 var gottenEmployes = vkdRows.Where(o => o["ID_employee"].ToString() == row.EmpId.ToString() 
                 && o["ID_Subdivision"].ToString() == row.SubId.ToString())
-                //.OrderBy(e=>e["ContractDocumentEndDate"].ToString())
+                .OrderBy(e=>e["RowNumber"].ToString())
                 .ToList();
                 var existingEmployes = campusRows.Where(t => t["ID_employee"].ToString() == row.EmpId.ToString() 
-                && t["ID_Subdivision"].ToString() == row.SubId.ToString())
-                //.OrderBy(e => e["ContractDocumentEndDate"].ToString())
+                && t["ID_Subdivision"].ToString() == row.SubId.ToString() 
+                && t["vcChangeStatus"].ToString() != "Видалено")
+                .OrderBy(e => e["eEmployees1Id"].ToString())
                 .ToList();
 
                 if (gottenEmployes.Count == existingEmployes.Count)
                 {
                     for (int i = 0; i < gottenEmployes.Count(); i++)
                     {
-                        RowUpdate(existingEmployes[i], gottenEmployes[i]);
+                        //if (existingEmployes[i]["vcChangeStatus"].ToString() != "Видалено")
+                        //{
+                            RowUpdate(existingEmployes[i], gottenEmployes[i]);
+                        //}
+                        //else
+                        //{
+                        //    var sourceRow = gottenEmployes[i];
+                        //    var newRow = campus.NewRow();
+                        //    CloneRow(sourceRow, _maximum, ref newRow);
+
+                        //    campus.Rows.Add(newRow);
+                        //    NLogCore.LogStatusAplication("Додано запис з ідентифікатором eEmployees1Id=" + _maximum.ToString());
+                        //    _maximum = _maximum + 1;
+                        //}
                     }
                 }
 
@@ -70,63 +84,81 @@ namespace DataBaseMigrator.Infrastructure
 
                 if (gottenEmployes.Count < existingEmployes.Count)
                 {
-                    int index1 = existingEmployes.Count;
-                    int index2 = gottenEmployes.Count;
-                    bool check = false;
+                    //int index1 = existingEmployes.Count;
+                    //int index2 = gottenEmployes.Count;
+                    //bool check = false;
 
-                    for (int i = 0; i < index1; i++)
+                    //for (int i = 0; i < index1; i++)
+                    //{
+                    //    for (int j = 0; j < index2; j++)
+                    //    {
+                    //        if (check)
+                    //        {
+                    //            i = 0; j = 0; check = false;
+                    //        }
+
+                    //        if (existingEmployes[i]["ID_Subdivision"].ToString() == gottenEmployes[j]["ID_Subdivision"].ToString())
+                    //        {
+                    //            RowUpdate(existingEmployes[i], gottenEmployes[j]);
+                    //            existingEmployes.RemoveAt(i);
+                    //            gottenEmployes.RemoveAt(j);
+                    //            index1 = index1 - 1;
+                    //            index2 = index2 - 1;
+                    //            check = true;
+                    //        }
+                    //    }
+                    //}
+
+                    //for (int i = 0; i < index1; i++)
+                    //{
+                    //for (int j = 0; j < index2; j++)
+                    //{
+                    //    if (check)
+                    //    {
+                    //         j = 0; check = false;
+                    //    }
+                    int index2 = 0;
+
+                    foreach (var gotEmployee in gottenEmployes.ToArray())
                     {
-                        for (int j = 0; j < index2; j++)
+                        if (existingEmployes.Any(r => r["ID_Duties"].ToString() == gotEmployee["ID_Duties"].ToString())
+                            && existingEmployes.Any(r => r["ID_Group"].ToString() == gotEmployee["ID_Group"].ToString())
+                            && existingEmployes.Any(r => r["IDEmploymentForm"].ToString() == gotEmployee["IDEmploymentForm"].ToString()))
                         {
-                            if (check)
-                            {
-                                i = 0; j = 0; check = false;
-                            }
-
-                            if (existingEmployes[i]["ID_Subdivision"].ToString() == gottenEmployes[j]["ID_Subdivision"].ToString())
-                            {
-                                RowUpdate(existingEmployes[i], gottenEmployes[j]);
-                                existingEmployes.RemoveAt(i);
-                                gottenEmployes.RemoveAt(j);
-                                index1 = index1 - 1;
-                                index2 = index2 - 1;
-                                check = true;
-                            }
+                            var getthis = existingEmployes.Find(r =>
+                                r["ID_Duties"].ToString() == gotEmployee["ID_Duties"].ToString() &&
+                                r["ID_Group"].ToString() == gotEmployee["ID_Group"].ToString() &&
+                                r["IDEmploymentForm"].ToString() == gotEmployee["IDEmploymentForm"].ToString());
+                            // var 
+                            var index1 = existingEmployes.FindIndex(r =>
+                                r["ID_Duties"].ToString() == gotEmployee["ID_Duties"].ToString() &&
+                                r["ID_Group"].ToString() == gotEmployee["ID_Group"].ToString() &&
+                                r["IDEmploymentForm"].ToString() == gotEmployee["IDEmploymentForm"].ToString());
+                            RowUpdate(getthis, gotEmployee);
+                            existingEmployes.RemoveAt(index1);
+                            gottenEmployes.RemoveAt(index2);
+                            //index1 = index1 - 1;
+                            //index2 = index2 - 1;
+                            //check = true;
                         }
+                        index2++;
                     }
+                
 
-                    for (int i = 0; i < index1; i++)
-                    {
-                        for (int j = 0; j < index2; j++)
-                        {
-                            if (check)
-                            {
-                                i = 0; j = 0; check = false;
-                            }
-
-                            if (existingEmployes[i]["ID_Duties"].ToString() == gottenEmployes[j]["ID_Duties"].ToString() || existingEmployes[i]["ID_Group"].ToString() == gottenEmployes[j]["ID_Group"].ToString() || existingEmployes[i]["IDEmploymentForm"].ToString() == gottenEmployes[j]["IDEmploymentForm"].ToString())
-                            {
-                                RowUpdate(existingEmployes[i], gottenEmployes[j]);
-                                existingEmployes.RemoveAt(i);
-                                gottenEmployes.RemoveAt(j);
-                                index1 = index1 - 1;
-                                index2 = index2 - 1;
-                                check = true;
-                            }
-                        }
-                    }
+                   
+                   // }
 
                     if (existingEmployes.Count != 0)
                     {
                         for (int i = 0; i < existingEmployes.Count; i++)
                         {
-                            if (existingEmployes[i]["vcChangeStatus"].ToString() != "Видалено")
-                            {
+                            //if (existingEmployes[i]["vcChangeStatus"].ToString() != "Видалено")
+                            //{
                                 existingEmployes[i]["vcChangeStatus"] = "Видалено";
                                 existingEmployes[i]["vcChangeDate"] = DateTime.Now;
 
                                 NLogCore.LogStatusAplication("Запис з ідентифікатором eEmployees1Id=" + existingEmployes[i]["eEmployees1Id"].ToString() + " видалено");
-                            }
+                           // }
                         }
                     }
 
@@ -148,12 +180,17 @@ namespace DataBaseMigrator.Infrastructure
         }
         protected void DeleteCheck(ref DataTable campus, ref DataTable Vkd)
         {
-            var employeesId = campus.AsEnumerable().Select(o => o["ID_employee"]).Distinct();
+            var employeesId = campus.AsEnumerable().Select(o=>new
+            {
+                EmpId = o["ID_employee"],
+                SubId = o["ID_Subdivision"]
+            }).Distinct();
 
             foreach (var ident in employeesId)
             {
 
-                var empl = Vkd.AsEnumerable().Where(p => p["ID_employee"].ToString() == ident.ToString())
+                var empl = Vkd.AsEnumerable().Where(p => p["ID_employee"].ToString() == ident.EmpId.ToString()
+                && p["ID_Subdivision"].ToString() == ident.SubId.ToString())
                     .Select(u => u["Surname"]).ToList();
 
                 if (!empl.Any())
@@ -255,23 +292,30 @@ namespace DataBaseMigrator.Infrastructure
             
         }
 
-        private int? GetUserAccountID(DataRow currentrow)
+        private object GetUserAccountID(DataRow currentrow)
         {
             using (SqlConnection connection = new SqlConnection(ConnectionStringManger.CampusBd))
             {
                 connection.Open();
-                var Fullname = currentrow["Surname"].ToString() + ' ' + currentrow["Name"].ToString() + ' ' +
-                               currentrow["Patronymic"].ToString();
-                var cmd = new SqlCommand($"select TOP 1 UserAccountId from UserAccount where FullName=@Fullname"
+                var Employee = currentrow["ID_employee"].ToString();
+                var cmd = new SqlCommand($"select distinct UserAccountId from eEmployees1 where ID_employee=@ID_employee"
                     , connection);
-                cmd.Parameters.Add("@Fullname", SqlDbType.NVarChar);
-                cmd.Parameters["@Fullname"].Value = Fullname;
+                cmd.Parameters.Add("@ID_employee", SqlDbType.NVarChar);
+                cmd.Parameters["@ID_employee"].Value = Employee;
                 var result = cmd.ExecuteReader();
-                int? userid = null;
+                object userid = null;
+                //result.IsDBNull();
                 if (result.HasRows)
                 {
                     result.Read();
-                    userid = result.GetInt32(0);
+                    if (result["UserAccountId"] != DBNull.Value)
+                    {
+                        userid =  result.GetInt32(0);
+                    }
+                    else
+                    {
+                        userid = DBNull.Value;
+                    }
                 }
                 return userid;
             }
