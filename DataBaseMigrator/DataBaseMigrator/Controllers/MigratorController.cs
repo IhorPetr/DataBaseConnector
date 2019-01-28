@@ -73,6 +73,7 @@ namespace DataBaseMigrator.Controllers
             catch(Exception ex)
             {
                 NLogCore.LogAplicationError(ex.Message);
+                NLogCore.LogAplicationError(ex.StackTrace);
                 Response.StatusCode = 500;
                 return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
             }
@@ -120,6 +121,42 @@ namespace DataBaseMigrator.Controllers
         {
             var t= maindirectory.GetProgressBarCount(y);
             return Json(t, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public ActionResult EmployeeAdd()
+        {
+            if (!ConnectionStringManger.ExistConnect())
+            {
+                DeleteCookies();
+                return RedirectToAction("Enter");
+            }
+            return View(maindirectory.GetAllTables());
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult EmployeeAdd(DataToConvert selectedToConvert)
+        {
+            try
+            {
+                maindirectory.PartialyUpdateCampusDatabase(selectedToConvert);
+            }
+            catch (Exception ex)
+            {
+                NLogCore.LogAplicationError(ex.Message);
+                NLogCore.LogAplicationError(ex.StackTrace);
+                Response.StatusCode = 500;
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+            return Json("Імпорт даних завершен успішно", JsonRequestBehavior.AllowGet);
+        }
+
+
+        public ActionResult SearchResult(SearchFilters searchFilters)
+        {
+            return PartialView(maindirectory.GetBySearchCondition(searchFilters));
         }
     }
 }

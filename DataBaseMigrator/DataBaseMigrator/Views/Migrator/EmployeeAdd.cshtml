@@ -1,0 +1,196 @@
+﻿@using System.Data
+@model  Dictionary<string,DataTable>
+@{
+    ViewBag.Title = "EmployeeAdd";
+    Layout = "~/Views/Shared/_MainDesign.cshtml";
+}
+
+<form method="post" action="/Migrator/EmployeeAdd" id="Myform">
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <ul class="nav nav-tabs nav-justified">
+                        <li><a href="@Url.Action("ProgressShow", "Migrator")">Повна конвертація</a></li>
+                        <li class="active"><a href="@Url.Action("EmployeeAdd", "Migrator")">Часткова конвертація</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.Label(Model.ElementAt(0).Key.ToString(), Model.ElementAt(0).Key.ToString(), new {@class = "control-label"})
+                </div>
+            </div>
+            <div class="col-md-6 ">
+                <div class="form-group">
+                    @Html.DropDownList("Hor", new SelectList(Model.ElementAt(0).Value.Rows.Cast<DataRow>().Select(o => o["TABLE_NAME"]).ToList()), new {@class = "form-control"})
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.Label(Model.ElementAt(1).Key.ToString(), Model.ElementAt(1).Key.ToString(), new {@class = "control-label"})
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.DropDownList("Tor", new SelectList(Model.ElementAt(1).Value.Rows.Cast<DataRow>().Select(o => o["TABLE_NAME"]).ToList()), new {@class = "form-control"})
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <div class="input-group">
+                        @*@Html.Label("Прізвище", "Прізвище", new { @class = "control-label" })*@
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                        <input type="text" id="LastName" class="form-control" placeholder="Прізвище"/>
+                    </div>
+                </div>
+                @*<div class="form-group">
+                    @Html.Label("Кафедра", "Кафедра", new { @class = "control-label" })
+                </div>*@
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <div class="input-group">
+                        @*@Html.Label("Ім'я", "Ім'я", new { @class = "control-label" })*@
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                        <input type="text" id="FirstName" class="form-control" placeholder="Ім'я"/>
+                    </div>
+                </div>
+                @*<div class="form-group">
+                    @Html.DropDownList("Hor", new SelectList(Model.Rows.Cast<DataRow>().Select(o =>
+                        new
+                        {
+                            Id = o["ID_Subdivision"],
+                            Name = o["SubdivName"]
+                        }).ToList(),
+                   "Id", "Name"), new {@class = "form-control", @id = "Hor" })
+                </div>*@
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <div class="input-group">
+                        @*@Html.Label("Позиція", "Позиція", new { @class = "control-label" })*@
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                        <input type="text" id="Position" class="form-control" placeholder="Позиція"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="results"></div>
+        <div class="overlay">
+            <div id="loader"></div>
+        </div>
+    </div>
+<div class="modal-footer">
+    <button type="button" id="Out" class="btn btn-danger">Вихід</button>
+    <button type="button" class="btn btn-default" id="GetError">Звіт помилок</button>
+    <button type="button" class="btn btn-default" id="GetInfo">Звіт імпорту даних</button>
+    <button type="submit" class="btn btn-primary">Почати</button>
+</div>
+</form>
+
+<script>
+    $(document).ready(function () {
+        function SendSearchRequest() {
+            $('.overlay').show();
+            $('#loader').show();
+            var sel1 = $("#Hor :selected").val();
+            var sel2 = $("#Tor :selected").val();
+            var searchLastName = $('#LastName').val().trim().toLowerCase();
+            var searchFirstName = $('#FirstName').val().trim().toLowerCase();
+            var searchPosition = $('#Position').val().trim().toLowerCase();
+            var objToSend = {
+                LastName: searchLastName,
+                FirstName: searchFirstName,
+                Position: searchPosition,
+                ViewName: sel1,
+                TableName: sel2
+            }
+            $.ajax({
+                type: "Post",
+                url: '/Migrator/SearchResult',
+                data: { searchFilters: objToSend },
+                dataType: "json",
+                error: function (response) {
+                    $('#results').html('');
+                    if (response.status === 200) {
+                        $('#results').html(response.responseText);
+                    } else {
+                        alert(response.responseText);   
+                    }
+                    $('#loader').hide();
+                    $('.overlay').hide();
+                }
+            });
+        }
+
+        $('#Myform').submit(function(event) {
+            event.preventDefault();
+            $('.overlay').show();
+            $('#loader').show();
+            var campusRows = [];
+            var vkdRows = [];
+            var sel1 = $("#Hor :selected").val();
+            var sel2 = $("#Tor :selected").val();
+            $("input:checkbox[name='Campus']").each(function() {
+                if ($(this).is(":checked")) {
+                    campusRows.push($(this).val());
+                }
+            });
+            $("input:checkbox[name='VKD']").each(function() {
+                if ($(this).is(":checked")) {
+                    vkdRows.push($(this).val());
+                }
+            });
+            var objToSend = {
+                CampusRows: campusRows,
+                VkdRows: vkdRows,
+                ViewName: sel1,
+                TableName: sel2
+            }
+
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: { selectedToConvert: objToSend },
+                dataType: "json",
+                error: function (xhr) {
+                    alert(JSON.parse(xhr.responseText).error);
+                    $('#loader').hide();
+                    $('.overlay').hide();
+                },
+                success: function (response) {
+                    $('#loader').hide();
+                    $('.overlay').hide();
+                    alert(response);
+                }
+            });
+        });
+        $('#Out').click(function() {
+            $(location).attr('href', '@Url.Action("Out", "Migrator")');
+        });
+        $('#GetInfo').click(function () {
+            $(location).attr('href', '@Url.Action("GetAplicationStatus", "Migrator")');
+        });
+        $('#GetError').click(function () {
+            $(location).attr('href', '@Url.Action("GetAplicationError", "Migrator")');
+        });
+        $('#LastName').focusout(SendSearchRequest);
+        $('#FirstName').focusout(SendSearchRequest);
+        $('#Position').focusout(SendSearchRequest);
+    });
+</script>
+
+@*<script>
+    $('#Hor').change(function(event) {
+        event.preventDefault();
+        var sel1 = $("#Hor :selected").val();
+    });
+</script>*@
+

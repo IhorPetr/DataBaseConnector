@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
+using DataBaseMigrator.Models;
 
 namespace DataBaseMigrator.Interface
 {
@@ -12,5 +10,7 @@ namespace DataBaseMigrator.Interface
         Dictionary<string, DataTable> GetAllTables();
         void UpdateCampusDatabase(string[] g);
         int GetProgressBarCount(string t);
+        void PartialyUpdateCampusDatabase(DataToConvert dataToConvert);
+        SearchResult GetBySearchCondition(SearchFilters searchFilters);
     }
 }

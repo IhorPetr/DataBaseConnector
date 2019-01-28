@@ -8,26 +8,36 @@
 <form method="post" action="/Migrator/ProgressShow" id="Myform">
     <div class="modal-body">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="form-group">
-                    @Html.Label(Model.ElementAt(0).Key.ToString(), Model.ElementAt(0).Key.ToString(), new { @class = "control-label" })
-                </div>
-            </div>
-            <div class="col-md-6 ">
-                <div class="form-group">
-                    @Html.DropDownList("Hor", new SelectList(Model.ElementAt(0).Value.Rows.Cast<DataRow>().Select(o => o["TABLE_NAME"]).ToList()), new { @class = "form-control" })
+                    <ul class="nav nav-tabs nav-justified">
+                        <li class="active"><a href="@Url.Action("ProgressShow", "Migrator")">Повна конвертація</a></li>
+                        <li><a href="@Url.Action("EmployeeAdd", "Migrator")">Часткова конвертація</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    @Html.Label(Model.ElementAt(1).Key.ToString(), Model.ElementAt(1).Key.ToString(), new { @class = "control-label" })
+                    @Html.Label(Model.ElementAt(0).Key.ToString(), Model.ElementAt(0).Key.ToString(), new {@class = "control-label"})
+                </div>
+            </div>
+            <div class="col-md-6 ">
+                <div class="form-group">
+                    @Html.DropDownList("Hor", new SelectList(Model.ElementAt(0).Value.Rows.Cast<DataRow>().Select(o => o["TABLE_NAME"]).ToList()), new {@class = "form-control"})
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.Label(Model.ElementAt(1).Key.ToString(), Model.ElementAt(1).Key.ToString(), new {@class = "control-label"})
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    @Html.DropDownList("Tor", new SelectList(Model.ElementAt(1).Value.Rows.Cast<DataRow>().Select(o => o["TABLE_NAME"]).ToList()), new { @class = "form-control" })
+                    @Html.DropDownList("Tor", new SelectList(Model.ElementAt(1).Value.Rows.Cast<DataRow>().Select(o => o["TABLE_NAME"]).ToList()), new {@class = "form-control"})
                 </div>
             </div>
         </div>

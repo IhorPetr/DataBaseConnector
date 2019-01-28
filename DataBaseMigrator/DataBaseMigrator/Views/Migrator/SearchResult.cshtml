@@ -1,0 +1,311 @@
+﻿@using System.Data
+@model  DataBaseMigrator.Models.SearchResult
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="control-label">Таблиця Кампус (@Model.CampusResult.TableName): </label>
+            <div class="table-responsive" style=" height: 200px; overflow: auto;">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" name="Campus-select-all" id="Campus-select-all" /></th>
+                        <th>eEmployees1I</th>
+                        <th>ID_employee</th>
+                        <th>Surname</th>
+                        <th>Name</th>
+                        <th>Patronymic</th>
+                        <th>ID_Sex</th>
+                        <th>SexName</th>
+                        <th>id_sector</th>
+                        <th>SectorName</th>
+                        <th>ID_Subdivision</th>
+                        <th>SubdivName</th>
+                        <th>ID_Duties</th>
+                        <th>DutiesName</th>
+                        <th>Id_DutiesSubtype</th>
+                        <th>DutiesSubTypeName</th>
+                        <th>ID_Group</th>
+                        <th>GroupName</th>
+                        <th>ContractDocumentEndDate</th>
+                        <th>IDEmploymentForm</th>
+                        <th>EmploymentActivityCategory</th>
+                        <th>EmploymentPersonStatusType</th>
+                        <th>UserAccountId</th>
+                        <th>vcChangeDate</th>
+                        <th>vcChangeStatus</th>
+                        <th>PersonId</th>
+                        <th>vcContractEnd</th>
+                        <th>ID_AcademicDegree</th>
+                        <th>ID_DCAcademicDegree</th>
+                        <th>AcademicDegreeName</th>
+                        <th>AcademicDegreeDate</th>
+                        <th>ID_AcademicStatus</th>
+                        <th>ID_DCAcademicStatus</th>
+                        <th>AcademicStatusName</th>
+                        <th>AcademicStatusDate</th>
+
+                        <th>DoplataName</th>
+                        <th>NadbavkaName</th>
+                        <th>IdRtStaffHoliday</th>
+                        <th>StaffHolidaysType</th>
+                        <th>StaffHolidaysSubtype</th>
+                        <th>StaffHolidaysKind</th>
+                        <th>DoplatiDuties</th>
+                        <th>DoplatidutiesSubtype</th>
+                        <th>DoplatiSector</th>
+                        <th>Doplatisubdivision</th>
+                        <th>DoplatiGroup</th>
+                        <th>Nadbavkaduties</th>
+                        <th>NadbavkaDutiesSubtype</th>
+                        <th>NadbavkaSector</th>
+                        <th>NadbavkaSubdivision</th>
+                        <th>NadbavkaGroup</th>
+                        <th>NadbavkaDutiesName</th>
+                        <th>NadbavkaDutiesSubtypeName</th>
+                        <th>NadbavkaSectorName</th>
+                        <th>NadbavkagroupName</th>
+                        <th>NadbavkaSubdivisionName</th>
+                        <th>DoplatiDutiesName</th>
+                        <th>DoplatiDutiesSubTypeName</th>
+                        <th>DoplatiSectorName</th>
+                        <th>DoplatiSubdivisionName</th>
+                        <th>DoplatiGroupName</th>
+                    </tr>
+                    </thead>
+                    <tbody id="SearchingCampus">
+                    @foreach (var items in Model.CampusResult.Rows.Cast<DataRow>())
+                    {
+                        <tr>
+                            <td><input type="checkbox" name="Campus" value="@items["eEmployees1Id"]"></td>
+                            <td>@items["eEmployees1Id"]</td>
+                            <td>@items["ID_employee"]</td>
+                            <td>@items["Surname"]</td>
+                            <td>@items["Name"]</td>
+                            <td>@items["Patronymic"]</td>
+                            <td>@items["ID_Sex"]</td>
+                            <td>@items["SexName"]</td>
+                            <td>@items["id_sector"]</td>
+                            <td>@items["SectorName"]</td>
+                            <td>@items["ID_Subdivision"]</td>
+                            <td>@items["SubdivName"]</td>
+                            <td>@items["ID_Duties"]</td>
+                            <td>@items["DutiesName"]</td>
+                            <td>@items["Id_DutiesSubtype"]</td>
+                            <td>@items["DutiesSubTypeName"]</td>
+                            <td>@items["ID_Group"]</td>
+                            <td>@items["GroupName"]</td>
+                            <td>@items["ContractDocumentEndDate"]</td>
+                            <td>@items["IDEmploymentForm"]</td>
+                            <td>@items["EmploymentActivityCategory"]</td>
+                            <td>@items["EmploymentPersonStatusType"]</td>
+                            <td>@items["UserAccountId"]</td>
+                            <td>@items["vcChangeDate"]</td>
+                            <td>@items["vcChangeStatus"]</td>
+                            <td>@items["PersonId"]</td>
+                            <td>@items["vcContractEnd"]</td>
+                            <td>@items["ID_AcademicDegree"]</td>
+                            <td>@items["ID_DCAcademicDegree"]</td>
+                            <td>@items["AcademicDegreeName"]</td>
+                            <td>@items["AcademicDegreeDate"]</td>
+                            <td>@items["ID_AcademicStatus"]</td>
+                            <td>@items["ID_DCAcademicStatus"]</td>
+                            <td>@items["AcademicStatusName"]</td>
+                            <td>@items["AcademicStatusDate"]</td>
+                            <td>@items["DoplataName"]</td>
+                            <td>@items["NadbavkaName"]</td>
+                            <td>@items["IdRtStaffHoliday"]</td>
+                            <td>@items["StaffHolidaysType"]</td>
+                            <td>@items["StaffHolidaysSubtype"]</td>
+                            <td>@items["StaffHolidaysKind"]</td>
+                            <td>@items["DoplatiDuties"]</td>
+                            <td>@items["DoplatidutiesSubtype"]</td>
+                            <td>@items["DoplatiSector"]</td>
+                            <td>@items["Doplatisubdivision"]</td>
+                            <td>@items["DoplatiGroup"]</td>
+                            <td>@items["Nadbavkaduties"]</td>
+                            <td>@items["NadbavkaDutiesSubtype"]</td>
+                            <td>@items["NadbavkaSector"]</td>
+                            <td>@items["NadbavkaSubdivision"]</td>
+                            <td>@items["NadbavkaGroup"]</td>
+                            <td>@items["NadbavkaDutiesName"]</td>
+                            <td>@items["NadbavkaDutiesSubtypeName"]</td>
+                            <td>@items["NadbavkaSectorName"]</td>
+                            <td>@items["NadbavkagroupName"]</td>
+                            <td>@items["NadbavkaSubdivisionName"]</td>
+                            <td>@items["DoplatiDutiesName"]</td>
+                            <td>@items["DoplatiDutiesSubTypeName"]</td>
+                            <td>@items["DoplatiSectorName"]</td>
+                            <td>@items["DoplatiSubdivisionName"]</td>
+                            <td>@items["DoplatiGroupName"]</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+            <p class="navbar-text" >Кількість записів: @Model.CampusResult.Rows.Count</p>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="control-label">Представлення ВКД (@Model.ViewResult.TableName): </label>
+            <div class="table-responsive" style=" height: 200px; overflow: auto;">
+                <table class="table table-striped">
+                    <tr>
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" name="VKD-select-all" id="VKD-select-all" /></th>
+                        <th>RowNumber</th>
+                        <th>ID_employee</th>
+                        <th>Surname</th>
+                        <th>Name</th>
+                        <th>Patronymic</th>
+                        <th>ID_Sex</th>
+                        <th>SexName</th>
+                        <th>id_sector</th>
+                        <th>SectorName</th>
+                        <th>ID_Subdivision</th>
+                        <th>SubdivName</th>
+                        <th>ID_Duties</th>
+                        <th>DutiesName</th>
+                        <th>Id_DutiesSubtype</th>
+                        <th>DutiesSubTypeName</th>
+                        <th>ID_Group</th>
+                        <th>GroupName</th>
+                        <th>ContractDocumentEndDate</th>
+                        <th>IDEmploymentForm</th>
+                        <th>EmploymentActivityCategory</th>
+                        <th>EmploymentPersonStatusType</th>
+                        <th>ID_AcademicDegree</th>
+                        <th>ID_DCAcademicDegree</th>
+                        <th>AcademicDegreeName</th>
+                        <th>AcademicDegreeDate</th>
+                        <th>ID_AcademicStatus</th>
+                        <th>ID_DCAcademicStatus</th>
+                        <th>AcademicStatusName</th>
+                        <th>AcademicStatusDate</th>                       
+                        <th>DoplataName</th>
+                        <th>NadbavkaName</th>
+                        <th>IdStaffHolidays</th>
+                        <th>StaffHolidaysType</th>
+                        <th>StaffHolidaysSubtype</th>
+                        <th>StaffHolidaysKind</th>
+                        <th>DoplatiDuties</th>
+                        <th>DoplatidutiesSubtype</th>
+                        <th>DoplatiSector</th>
+                        <th>Doplatisubdivision</th>
+                        <th>DoplatiGroup</th>
+                        <th>Nadbavkaduties</th>
+                        <th>NadbavkaDutiesSubtype</th>
+                        <th>NadbavkaSector</th>
+                        <th>NadbavkaSubdivision</th>
+                        <th>NadbavkaGroup</th>
+                        <th>NadbavkaDutiesName</th>
+                        <th>NadbavkaDutiesSubtypeName</th>
+                        <th>NadbavkaSectorName</th>
+                        <th>NadbavkagroupName</th>
+                        <th>NadbavkaSubdivisionName</th>
+                        <th>DoplatiDutiesName</th>
+                        <th>DoplatiDutiesSubTypeName</th>
+                        <th>DoplatiSectorName</th>
+                        <th>DoplatiSubdivisionName</th>
+                        <th>DoplatiGroupName</th>
+                    </tr>
+                    </thead>
+                    <tbody id="SearchingVKD">
+                    @foreach (var item in Model.ViewResult.Rows.Cast<DataRow>())
+                    {
+                        <tr>
+                            <td><input type="checkbox" name="VKD" value="@item["RowNumber"]"></td>
+                            <td>@item["RowNumber"]</td>
+                            <td>@item["ID_employee"]</td>
+                            <td>@item["Surname"]</td>
+                            <td>@item["Name"]</td>
+                            <td>@item["Patronymic"]</td>
+                            <td>@item["ID_Sex"]</td>
+                            <td>@item["SexName"]</td>
+                            <td>@item["id_sector"]</td>
+                            <td>@item["SectorName"]</td>
+                            <td>@item["ID_Subdivision"]</td>
+                            <td>@item["SubdivName"]</td>
+                            <td>@item["ID_Duties"]</td>
+                            <td>@item["DutiesName"]</td>
+                            <td>@item["Id_DutiesSubtype"]</td>
+                            <td>@item["DutiesSubTypeName"]</td>
+                            <td>@item["ID_Group"]</td>
+                            <td>@item["GroupName"]</td>
+                            <td>@item["ContractDocumentEndDate"]</td>
+                            <td>@item["IDEmploymentForm"]</td>
+                            <td>@item["EmploymentActivityCategory"]</td>
+                            <td>@item["EmploymentPersonStatusType"]</td>
+                            <td>@item["ID_AcademicDegree"]</td>
+                            <td>@item["ID_DCAcademicDegree"]</td>
+                            <td>@item["AcademicDegreeName"]</td>
+                            <td>@item["AcademicDegreeDate"]</td>
+                            <td>@item["ID_AcademicStatus"]</td>
+                            <td>@item["ID_DCAcademicStatus"]</td>
+                            <td>@item["ID_DCAcademicDegree"]</td>
+                            <td>@item["AcademicStatusName"]</td>
+                            <td>@item["AcademicStatusDate"]</td>
+                            <td>@item["DoplataName"]</td>
+                            <td>@item["NadbavkaName"]</td>
+                            <td>@item["IdStaffHolidays"]</td>
+                            <td>@item["StaffHolidaysType"]</td>
+                            <td>@item["StaffHolidaysSubtype"]</td>
+                            <td>@item["StaffHolidaysKind"]</td>
+                            <td>@item["DoplatiDuties"]</td>
+                            <td>@item["DoplatidutiesSubtype"]</td>
+                            <td>@item["DoplatiSector"]</td>
+                            <td>@item["Doplatisubdivision"]</td>
+                            <td>@item["DoplatiGroup"]</td>
+                            <td>@item["Nadbavkaduties"]</td>
+                            <td>@item["NadbavkaDutiesSubtype"]</td>
+                            <td>@item["NadbavkaSector"]</td>
+                            <td>@item["NadbavkaSubdivision"]</td>
+                            <td>@item["NadbavkaGroup"]</td>
+                            <td>@item["NadbavkaDutiesName"]</td>
+                            <td>@item["NadbavkaDutiesSubtypeName"]</td>
+                            <td>@item["NadbavkaSectorName"]</td>
+                            <td>@item["NadbavkagroupName"]</td>
+                            <td>@item["NadbavkaSubdivisionName"]</td>
+                            <td>@item["DoplatiDutiesName"]</td>
+                            <td>@item["DoplatiDutiesSubTypeName"]</td>
+                            <td>@item["DoplatiSectorName"]</td>
+                            <td>@item["DoplatiSubdivisionName"]</td>
+                            <td>@item["DoplatiGroupName"]</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+            <p class="navbar-text">Кількість записів: @Model.ViewResult.Rows.Count</p>
+        </div>
+    </div>
+</div>
+<script>
+    $('#Campus-select-all').click(function(event) {   
+        if(this.checked) {
+            // Iterate each checkbox
+            $("input:checkbox[name='Campus']").each(function() {
+                this.checked = true;                        
+            });
+        } else {
+            $("input:checkbox[name='Campus']").each(function() {
+                this.checked = false;                       
+            });
+        }
+    });
+    $('#VKD-select-all').click(function(event) {   
+        if(this.checked) {
+            // Iterate each checkbox
+            $("input:checkbox[name='VKD']").each(function() {
+                this.checked = true;                        
+            });
+        } else {
+            $("input:checkbox[name='VKD']").each(function() {
+                this.checked = false;                       
+            });
+        }
+    });
+</script>

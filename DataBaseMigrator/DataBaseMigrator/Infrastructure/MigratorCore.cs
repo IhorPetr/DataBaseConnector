@@ -241,7 +241,7 @@ namespace DataBaseMigrator.Infrastructure
             }
         }
 
-        protected void DeleteCheck(ref DataTable campus, ref DataTable Vkd)
+        protected void DeleteCheck(ref DataTable campus, ref DataTable Vkd, BaseCore campusBaseCore)
         {
             var employeesId = campus.AsEnumerable().Select(o => new
             {
@@ -258,7 +258,7 @@ namespace DataBaseMigrator.Infrastructure
 
                 if (!empl.Any())
                 {
-                    var employees = campus.Select("ID_employee=" + ident);
+                    var employees = campus.Select("ID_employee=" + ident.EmpId.ToString());
 
                     foreach (var row in employees)
                     {
@@ -270,6 +270,7 @@ namespace DataBaseMigrator.Infrastructure
                             NLogCore.LogStatusAplication("Запис з ідентифікатором eEmployees1Id=" + row["eEmployees1Id"] + " видалено");
                         }
                     }
+                    campusBaseCore.UpdateDataBase(campus);
                 }
             }
         }
